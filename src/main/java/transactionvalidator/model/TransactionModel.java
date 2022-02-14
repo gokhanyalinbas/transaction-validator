@@ -15,6 +15,8 @@ public class TransactionModel {
     private RecordModel recordModel;
 
     public boolean isTransactionValid() {
-        return recordModel.getEndBalance().compareTo(recordModel.getStartBalance().add(recordModel.getMutation())) == ApplicationConstant.EQUAL;
+        return recordModel.getEndBalance()
+                .compareTo(recordModel.getStartBalance()
+                        .add(recordModel.getMutation())) == ApplicationConstant.EQUAL;
     }
 }

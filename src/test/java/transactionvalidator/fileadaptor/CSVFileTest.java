@@ -2,7 +2,6 @@ package transactionvalidator.fileadaptor;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import transactionvalidator.exception.FileWriterException;
 import transactionvalidator.model.OutputModel;
 import transactionvalidator.model.RecordModel;
 
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CSVFileTest {
 
@@ -41,10 +39,5 @@ class CSVFileTest {
         // If no exception, test is ok
     }
 
-    @Test
-    void writeFileException() {
-        List<OutputModel> outputModels = null;
-        assertThrows(FileWriterException.class, () -> csvFile.writeFile(outputModels));
 
-    }
 }

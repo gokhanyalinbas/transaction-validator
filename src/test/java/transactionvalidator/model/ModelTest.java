@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ModelTest {
 
@@ -16,6 +17,10 @@ class ModelTest {
                 .build();
         assertEquals("desc", model.getDescription());
         assertEquals(12345, model.getReference());
+
+        OutputModel modelWithNoArgs = new OutputModel();
+        assertEquals(0, modelWithNoArgs.getReference());
+        assertNull(modelWithNoArgs.getDescription());
     }
 
     @Test
@@ -39,6 +44,9 @@ class ModelTest {
         assertEquals(12.50, transactionModel.getRecordModel().getEndBalance().doubleValue());
         assertEquals(12.1, transactionModel.getRecordModel().getMutation().doubleValue());
         assertEquals(45.78, transactionModel.getRecordModel().getStartBalance().doubleValue());
+
+        TransactionModel transactionModelwithnoArgs = new TransactionModel();
+        assertNull(transactionModelwithnoArgs.getRecordModel());
     }
 
     private TransactionModel getTransaction() {
