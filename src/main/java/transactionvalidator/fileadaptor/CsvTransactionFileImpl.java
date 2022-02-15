@@ -28,7 +28,7 @@ public class CsvTransactionFileImpl implements TransactionFile {
         return csvReader.readAll().stream().map(data -> getModel(data)).collect(Collectors.toList());
     }
 
-    private RecordModel getModel(String[] data) {
+    private RecordModel getModel(final String[] data) {
         return RecordModel.builder()
                 .reference(Long.parseLong(data[0]))
                 .accountNumber(data[1])

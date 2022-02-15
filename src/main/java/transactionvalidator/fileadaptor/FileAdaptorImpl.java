@@ -25,7 +25,7 @@ public class FileAdaptorImpl implements FileAdaptor {
         return getRecordsFromFiles(inputFiles).get();
     }
 
-    private Optional<List<RecordModel>> getRecordsFromFiles(String[] inputFiles) throws IOException {
+    private Optional<List<RecordModel>> getRecordsFromFiles(final String[] inputFiles) throws IOException {
         List<RecordModel> recordModels = new ArrayList<>();
         for (String file : inputFiles) {
             recordModels.addAll(processFile(file));
@@ -33,18 +33,18 @@ public class FileAdaptorImpl implements FileAdaptor {
         return Optional.of(recordModels);
     }
 
-    private List<RecordModel> processFile(String file) throws IOException {
+    private List<RecordModel> processFile(final String file) throws IOException {
 
         String fileType = getFileType(file);
         return transactionFileFactory.getFile(fileType).readFile(file);
     }
 
-    private String getFileType(String file) {
+    private String getFileType(final String file) {
         return FilenameUtils.getExtension(file);
     }
 
     @Override
-    public void writeFile(List<OutputModel> outputModels) throws IOException {
+    public void writeFile(final List<OutputModel> outputModels) throws IOException {
         transactionFileFactory.getFile(ApplicationConstant.CSV).writeFile(outputModels);
         transactionFileFactory.getFile(ApplicationConstant.JSON).writeFile(outputModels);
     }

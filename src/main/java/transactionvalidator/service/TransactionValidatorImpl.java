@@ -34,11 +34,11 @@ public class TransactionValidatorImpl implements TransactionValidator {
         return isUnique && isBalanceCorrect;
     }
 
-    private boolean isUnique(TransactionModel transactionModel) {
+    private boolean isUnique(final TransactionModel transactionModel) {
         return transactionRepository.add(transactionModel.getRecordModel().getReference());
     }
 
-    private boolean isBalanceCorrect(TransactionModel transactionModel) {
+    private boolean isBalanceCorrect(final TransactionModel transactionModel) {
         return transactionModel.isTransactionValid();
     }
 
