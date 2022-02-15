@@ -20,9 +20,9 @@ class FileAdaptorImplTest {
 
     @BeforeEach
     void setup() {
-        JSONFile jsonFile = new JSONFile();
-        CSVFile csvFile = new CSVFile();
-        fileAdaptor = new FileAdaptorImpl(jsonFile, csvFile);
+        JsonTransactionFileImpl jsonTransactionFileImpl = new JsonTransactionFileImpl();
+        CsvTransactionFileImpl csvTransactionFileImpl = new CsvTransactionFileImpl();
+        fileAdaptor = new FileAdaptorImpl(new TransactionFileFactory(jsonTransactionFileImpl, csvTransactionFileImpl));
     }
 
     @Test

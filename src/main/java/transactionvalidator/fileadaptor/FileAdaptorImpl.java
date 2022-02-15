@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Component;
 import transactionvalidator.constant.ApplicationConstant;
-import transactionvalidator.exception.UnSupportedFileException;
 import transactionvalidator.model.OutputModel;
 import transactionvalidator.model.RecordModel;
 
@@ -17,8 +16,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class FileAdaptorImpl implements FileAdaptor {
-    private final JSONFile jsonFile;
-    private final CSVFile csvFile;
+    private final TransactionFileFactory transactionFileFactory;
 
     @Override
     public List<RecordModel> readFile() throws IOException {
@@ -38,14 +36,7 @@ public class FileAdaptorImpl implements FileAdaptor {
     private List<RecordModel> processFile(String file) throws IOException {
 
         String fileType = getFileType(file);
-        switch (fileType.toUpperCase()) {
-            case ApplicationConstant.CSV:
-                return csvFile.readFile(file);
-            case ApplicationConstant.JSON:
-                return jsonFile.readFile(file);
-            default:
-                throw new UnSupportedFileException("Unsupported file type ! " + fileType);
-        }
+        return transactionFileFactory.getFile(fileType).readFile(file);
     }
 
     private String getFileType(String file) {
@@ -54,8 +45,7 @@ public class FileAdaptorImpl implements FileAdaptor {
 
     @Override
     public void writeFile(List<OutputModel> outputModels) throws IOException {
-
-        jsonFile.writeFile(outputModels);
-        csvFile.writeFile(outputModels);
+        transactionFileFactory.getFile(ApplicationConstant.CSV).writeFile(outputModels);
+        transactionFileFactory.getFile(ApplicationConstant.JSON).writeFile(outputModels);
     }
 }

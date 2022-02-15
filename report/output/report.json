@@ -1,6 +1,1 @@
-[
-  {
-    "reference": 12345,
-    "description": "desc"
-  }
-]
+[{"reference":112806,"description":"Transaction reference is not unique."},{"reference":112806,"description":"Transaction reference is not unique."},{"reference":167875,"description":"End balance is not correct."},{"reference":165102,"description":"End balance is not correct."}]

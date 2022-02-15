@@ -1,0 +1,156 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > FileAdaptorImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">transactionvalidator.fileadaptor</a>
+</div>
+
+<h1>Coverage Summary for Class: FileAdaptorImpl (transactionvalidator.fileadaptor)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FileAdaptorImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88%
+  </span>
+  <span class="absValue">
+    (22/25)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package transactionvalidator.fileadaptor;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import lombok.RequiredArgsConstructor;
+<i class="no-highlight">4</i>&nbsp;import org.apache.commons.io.FilenameUtils;
+<i class="no-highlight">5</i>&nbsp;import org.springframework.stereotype.Component;
+<i class="no-highlight">6</i>&nbsp;import transactionvalidator.constant.ApplicationConstant;
+<i class="no-highlight">7</i>&nbsp;import transactionvalidator.model.OutputModel;
+<i class="no-highlight">8</i>&nbsp;import transactionvalidator.model.RecordModel;
+<i class="no-highlight">9</i>&nbsp;
+<i class="no-highlight">10</i>&nbsp;import java.io.File;
+<i class="no-highlight">11</i>&nbsp;import java.io.IOException;
+<i class="no-highlight">12</i>&nbsp;import java.util.ArrayList;
+<i class="no-highlight">13</i>&nbsp;import java.util.List;
+<i class="no-highlight">14</i>&nbsp;import java.util.Optional;
+<i class="no-highlight">15</i>&nbsp;
+<i class="no-highlight">16</i>&nbsp;@Component
+<b class="fc"><i class="no-highlight">17</i>&nbsp;@RequiredArgsConstructor</b>
+<b class="fc"><i class="no-highlight">18</i>&nbsp;public class FileAdaptorImpl implements FileAdaptor {</b>
+<i class="no-highlight">19</i>&nbsp;    private final TransactionFileFactory transactionFileFactory;
+<i class="no-highlight">20</i>&nbsp;
+<i class="no-highlight">21</i>&nbsp;    @Override
+<i class="no-highlight">22</i>&nbsp;    public List&lt;RecordModel&gt; readFile() throws IOException {
+<b class="fc"><i class="no-highlight">23</i>&nbsp;        File file = new File(ApplicationConstant.INPUT_FILEPATH);</b>
+<b class="fc"><i class="no-highlight">24</i>&nbsp;        String[] inputFiles = file.list();</b>
+<b class="fc"><i class="no-highlight">25</i>&nbsp;        return getRecordsFromFiles(inputFiles).get();</b>
+<b class="fc"><i class="no-highlight">26</i>&nbsp;    }</b>
+<b class="fc"><i class="no-highlight">27</i>&nbsp;</b>
+<i class="no-highlight">28</i>&nbsp;    private Optional&lt;List&lt;RecordModel&gt;&gt; getRecordsFromFiles(String[] inputFiles) throws IOException {
+<b class="fc"><i class="no-highlight">29</i>&nbsp;        List&lt;RecordModel&gt; recordModels = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i class="no-highlight">30</i>&nbsp;        for (String file : inputFiles) {</b>
+<b class="fc"><i class="no-highlight">31</i>&nbsp;            recordModels.addAll(processFile(file));</b>
+<b class="fc"><i class="no-highlight">32</i>&nbsp;        }</b>
+<b class="fc"><i class="no-highlight">33</i>&nbsp;        return Optional.of(recordModels);</b>
+<i class="no-highlight">34</i>&nbsp;    }
+<b class="nc"><i class="no-highlight">35</i>&nbsp;</b>
+<i class="no-highlight">36</i>&nbsp;    private List&lt;RecordModel&gt; processFile(String file) throws IOException {
+<i class="no-highlight">37</i>&nbsp;
+<b class="fc"><i class="no-highlight">38</i>&nbsp;        String fileType = getFileType(file);</b>
+<b class="fc"><i class="no-highlight">39</i>&nbsp;        return transactionFileFactory.getFile(fileType).readFile(file);</b>
+<b class="fc"><i class="no-highlight">40</i>&nbsp;    }</b>
+<b class="fc"><i class="no-highlight">41</i>&nbsp;</b>
+<i class="no-highlight">42</i>&nbsp;    private String getFileType(String file) {
+<b class="fc"><i class="no-highlight">43</i>&nbsp;        return FilenameUtils.getExtension(file);</b>
+<i class="no-highlight">44</i>&nbsp;    }
+<b class="fc"><i class="no-highlight">45</i>&nbsp;</b>
+<i class="no-highlight">46</i>&nbsp;    @Override
+<b class="fc"><i class="no-highlight">47</i>&nbsp;    public void writeFile(List&lt;OutputModel&gt; outputModels) throws IOException {</b>
+<b class="fc"><i class="no-highlight">48</i>&nbsp;        transactionFileFactory.getFile(ApplicationConstant.CSV).writeFile(outputModels);</b>
+<b class="fc"><i class="no-highlight">49</i>&nbsp;        transactionFileFactory.getFile(ApplicationConstant.JSON).writeFile(outputModels);</b>
+<i class="no-highlight">50</i>&nbsp;    }
+<i class="no-highlight">51</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-02-15 17:50</div>
+</div>
+</body>
+</html>

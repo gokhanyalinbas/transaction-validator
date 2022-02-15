@@ -21,20 +21,17 @@ public class TransactionValidatorImpl implements TransactionValidator {
 
         boolean isUnique = isUnique(transactionModel);
         boolean isBalanceCorrect = isBalanceCorrect(transactionModel);
-        if (!isUnique || !isBalanceCorrect) {
-            StringBuilder stringBuilder = new StringBuilder();
-            if (!isUnique)
-                stringBuilder.append(ApplicationConstant.INVALID_TRANSACTION_REFERENCE);
-            if (!isBalanceCorrect)
-                stringBuilder.append(ApplicationConstant.INVALID_BALANCE);
-
-            Optional<OutputModel> model = Optional.of(OutputModel.builder()
-                    .description(stringBuilder.toString())
-                    .reference(transactionModel.getRecordModel().getReference())
-                    .build());
-            return model;
+        if (!isValid(isUnique, isBalanceCorrect)) {
+            StringBuilder sb = new StringBuilder();
+            getUniqueErrorDescription(isUnique).ifPresent(desc -> sb.append(desc));
+            getBalanceErrorDescription(isBalanceCorrect).ifPresent(desc -> sb.append(desc));
+            return getOutputModel(transactionModel, sb);
         }
         return Optional.empty();
+    }
+
+    private boolean isValid(boolean isUnique, boolean isBalanceCorrect) {
+        return isUnique && isBalanceCorrect;
     }
 
     private boolean isUnique(TransactionModel transactionModel) {
@@ -45,5 +42,20 @@ public class TransactionValidatorImpl implements TransactionValidator {
         return transactionModel.isTransactionValid();
     }
 
+    private Optional<OutputModel> getOutputModel(TransactionModel transactionModel, StringBuilder stringBuilder) {
+        Optional<OutputModel> model = Optional.of(OutputModel.builder()
+                .description(stringBuilder.toString())
+                .reference(transactionModel.getRecordModel().getReference())
+                .build());
+        return model;
+    }
+
+    private Optional<String> getUniqueErrorDescription(boolean flag) {
+        return flag ? Optional.empty() : Optional.of(ApplicationConstant.INVALID_TRANSACTION_REFERENCE);
+    }
+
+    private Optional<String> getBalanceErrorDescription(boolean flag) {
+        return flag ? Optional.empty() : Optional.of(ApplicationConstant.INVALID_BALANCE);
+    }
 
 }

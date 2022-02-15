@@ -1,0 +1,166 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > TransactionValidatorImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">transactionvalidator.service</a>
+</div>
+
+<h1>Coverage Summary for Class: TransactionValidatorImpl (transactionvalidator.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TransactionValidatorImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (19/19)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package transactionvalidator.service;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import lombok.RequiredArgsConstructor;
+<i class="no-highlight">4</i>&nbsp;import org.springframework.stereotype.Service;
+<i class="no-highlight">5</i>&nbsp;import transactionvalidator.constant.ApplicationConstant;
+<i class="no-highlight">6</i>&nbsp;import transactionvalidator.model.OutputModel;
+<i class="no-highlight">7</i>&nbsp;import transactionvalidator.model.TransactionModel;
+<i class="no-highlight">8</i>&nbsp;import transactionvalidator.repository.TransactionRepository;
+<i class="no-highlight">9</i>&nbsp;
+<i class="no-highlight">10</i>&nbsp;import java.util.Optional;
+<i class="no-highlight">11</i>&nbsp;
+<i class="no-highlight">12</i>&nbsp;@Service
+<b class="fc"><i class="no-highlight">13</i>&nbsp;@RequiredArgsConstructor</b>
+<i class="no-highlight">14</i>&nbsp;public class TransactionValidatorImpl implements TransactionValidator {
+<i class="no-highlight">15</i>&nbsp;
+<i class="no-highlight">16</i>&nbsp;    private final TransactionRepository transactionRepository;
+<i class="no-highlight">17</i>&nbsp;
+<i class="no-highlight">18</i>&nbsp;
+<i class="no-highlight">19</i>&nbsp;    @Override
+<i class="no-highlight">20</i>&nbsp;    public Optional&lt;OutputModel&gt; validate(TransactionModel transactionModel) {
+<i class="no-highlight">21</i>&nbsp;
+<b class="fc"><i class="no-highlight">22</i>&nbsp;        boolean isUnique = isUnique(transactionModel);</b>
+<b class="fc"><i class="no-highlight">23</i>&nbsp;        boolean isBalanceCorrect = isBalanceCorrect(transactionModel);</b>
+<b class="fc"><i class="no-highlight">24</i>&nbsp;        if (!isValid(isUnique, isBalanceCorrect)) {</b>
+<b class="fc"><i class="no-highlight">25</i>&nbsp;            StringBuilder sb = new StringBuilder();</b>
+<b class="fc"><i class="no-highlight">26</i>&nbsp;            getUniqueErrorDescription(isUnique).ifPresent(desc -&gt; sb.append(desc));</b>
+<b class="fc"><i class="no-highlight">27</i>&nbsp;            getBalanceErrorDescription(isBalanceCorrect).ifPresent(desc -&gt; sb.append(desc));</b>
+<b class="fc"><i class="no-highlight">28</i>&nbsp;            return getOutputModel(transactionModel, sb);</b>
+<i class="no-highlight">29</i>&nbsp;        }
+<b class="fc"><i class="no-highlight">30</i>&nbsp;        return Optional.empty();</b>
+<i class="no-highlight">31</i>&nbsp;    }
+<i class="no-highlight">32</i>&nbsp;
+<i class="no-highlight">33</i>&nbsp;    private boolean isValid(boolean isUnique, boolean isBalanceCorrect) {
+<b class="fc"><i class="no-highlight">34</i>&nbsp;        return isUnique &amp;&amp; isBalanceCorrect;</b>
+<i class="no-highlight">35</i>&nbsp;    }
+<i class="no-highlight">36</i>&nbsp;
+<i class="no-highlight">37</i>&nbsp;    private boolean isUnique(TransactionModel transactionModel) {
+<b class="fc"><i class="no-highlight">38</i>&nbsp;        return transactionRepository.add(transactionModel.getRecordModel().getReference());</b>
+<i class="no-highlight">39</i>&nbsp;    }
+<i class="no-highlight">40</i>&nbsp;
+<i class="no-highlight">41</i>&nbsp;    private boolean isBalanceCorrect(TransactionModel transactionModel) {
+<b class="fc"><i class="no-highlight">42</i>&nbsp;        return transactionModel.isTransactionValid();</b>
+<i class="no-highlight">43</i>&nbsp;    }
+<i class="no-highlight">44</i>&nbsp;
+<i class="no-highlight">45</i>&nbsp;    private Optional&lt;OutputModel&gt; getOutputModel(TransactionModel transactionModel, StringBuilder stringBuilder) {
+<b class="fc"><i class="no-highlight">46</i>&nbsp;        Optional&lt;OutputModel&gt; model = Optional.of(OutputModel.builder()</b>
+<b class="fc"><i class="no-highlight">47</i>&nbsp;                .description(stringBuilder.toString())</b>
+<b class="fc"><i class="no-highlight">48</i>&nbsp;                .reference(transactionModel.getRecordModel().getReference())</b>
+<b class="fc"><i class="no-highlight">49</i>&nbsp;                .build());</b>
+<b class="fc"><i class="no-highlight">50</i>&nbsp;        return model;</b>
+<i class="no-highlight">51</i>&nbsp;    }
+<i class="no-highlight">52</i>&nbsp;
+<i class="no-highlight">53</i>&nbsp;    private Optional&lt;String&gt; getUniqueErrorDescription(boolean flag) {
+<b class="fc"><i class="no-highlight">54</i>&nbsp;        return flag ? Optional.empty() : Optional.of(ApplicationConstant.INVALID_TRANSACTION_REFERENCE);</b>
+<i class="no-highlight">55</i>&nbsp;    }
+<i class="no-highlight">56</i>&nbsp;
+<i class="no-highlight">57</i>&nbsp;    private Optional&lt;String&gt; getBalanceErrorDescription(boolean flag) {
+<b class="fc"><i class="no-highlight">58</i>&nbsp;        return flag ? Optional.empty() : Optional.of(ApplicationConstant.INVALID_BALANCE);</b>
+<i class="no-highlight">59</i>&nbsp;    }
+<i class="no-highlight">60</i>&nbsp;
+<i class="no-highlight">61</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-02-15 17:50</div>
+</div>
+</body>
+</html>
